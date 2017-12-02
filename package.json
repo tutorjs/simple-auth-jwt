@@ -1,0 +1,20 @@
+{
+  "name": "simple-auth-jwt",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index"
+  },
+  "author": "Adiatma Kamarudin <adiatma9024@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "jsonwebtoken": "^8.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.12.1"
+  },
+  "description": "Simple Auth With JWT"
+}
