@@ -38,36 +38,53 @@ app.get('/', (req, res) => {
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const user = users[0];
-  if ( email === user.email && password === user.password ) {
-    jwt.sign(user, 'secret', function(err, token) {
-      if (token) {
-        return res.redirect('/user?token=' + token);  
-      } else if (err) {
-        return res.status(401).json({
-          meta: {
-            code: 401,
-            success: false
-          },
-          message: 'Token false'
-        });
+
+  /**
+   * Error message.
+   */
+  const errorMessage = {
+    meta: {
+      code: 401,
+      status: 'Unauthorized'
+    }
+  };
+
+  /**
+   * Generate token
+   */
+  const generateToken = (err, token) => {
+    if (err) {
+      return res.status(401).json(errorMessage);
+    }
+    return res.redirect('/user?token=' + token);
+  };
+
+  if (email) {
+
+    const matchUserEmail = user => email === user.email;
+    const user = users.find(matchUserEmail);
+    
+    if (user) {
+      const matchEmailAndPassword = (email === user.email) && (password === user.password);
+      if ( matchEmailAndPassword ) {
+        jwt.sign(user, 'secret', generateToken);
+      } else {
+        res.status(401).json(errorMessage);
       }
-    });
+    } else {
+      res.status(401).json(errorMessage);
+    }
+
   } else {
-    res.status(401).json({
-      meta: {
-        code: 401,
-        success: false
-      },
-      message: 'User not authenticated!'
-    });
+    res.status(401).json(errorMessage);  
   }
+  
 });
 
 /**
-* User.
-* `GET http://localhost:3000/user?token=value`
-*/
+ * User.
+ * `GET http://localhost:3000/user?token=value`
+ */
 app.get('/user', (req, res) => {
   const token = req.query.token;
   if (token) {
